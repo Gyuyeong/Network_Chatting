@@ -10,18 +10,19 @@
 #include "utils.h"
 #include "types.h"
 
-volatile sig_atomic_t flag = 0;
-int sockfd = 0;
-char name[NAME_LEN];
+volatile sig_atomic_t flag = 0;  // flag to indicate whether aborted or not
+int sockfd = 0;  // socket connection with the server
+char name[NAME_LEN];  // name of the client
 
 // when ctrl_c is inserted, change the flag to exit
 void catch_ctrl_c_and_exit() {
     flag = 1;
 }
 
+// handle message sent to server
 void send_message_handler() {
     char buffer[BUFFER_SIZE] = {};
-    char message[BUFFER_SIZE + NAME_LEN + 4] = {};
+    char message[BUFFER_SIZE + NAME_LEN + 4] = {};  // message to send
 
     while (1) {
         overwrite_stdout();
@@ -31,27 +32,29 @@ void send_message_handler() {
         if (strcmp(buffer, "exit") == 0) break;
         else {
             sprintf(message, "%s: %s\n", name, buffer);
-            send(sockfd, message, strlen(message), 0);
+            send(sockfd, message, strlen(message), 0);  // send message
         }
 
-        bzero(buffer, BUFFER_SIZE);
-        bzero(message, BUFFER_SIZE + NAME_LEN + 4);
+        bzero(buffer, BUFFER_SIZE);  // clear buffer
+        bzero(message, BUFFER_SIZE + NAME_LEN + 4);  // clear message
     }
     catch_ctrl_c_and_exit(2);  // catch ctrl c
 }
 
+
+// handle received messages
 void receive_message_handler() {
     char message[BUFFER_SIZE] = {};
     while (1) {
-        int received = recv(sockfd, message, BUFFER_SIZE, 0);
+        int received = recv(sockfd, message, BUFFER_SIZE, 0);  // receive message from server
 
-        if (received > 0) {
+        if (received > 0) {  // received something
             printf("%s ", message);
             overwrite_stdout();
-        } else if (received == 0) {
+        } else if (received == 0) {  // did not receive anything
             break;
         }
-        bzero(message, BUFFER_SIZE);
+        bzero(message, BUFFER_SIZE);  // clear buffer
     }
 }
 
