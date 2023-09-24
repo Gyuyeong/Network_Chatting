@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
     trim_ln(name, strlen(name));
 
     if (strlen(name) > NAME_LEN - 1 || strlen(name) < 1) {
-        printf("Name must not be empty nor longer than 32 characters");
+        perror("Name must not be empty nor longer than 32 characters");
         return EXIT_FAILURE;
     }
 
@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
     // attempt to connect to the server
     int connected = connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
     if (connected == -1) {
-        printf("ERROR: connect\n");
+        perror("connect");
         return EXIT_FAILURE;
     }
 
@@ -100,13 +100,13 @@ int main(int argc, char **argv) {
 
     pthread_t send_message_thread;
     if (pthread_create(&send_message_thread, NULL, (void*)send_message_handler, NULL) != 0) {
-        printf("ERROR: send message\n");
+        perror("send message");
         return EXIT_FAILURE;
     }
 
     pthread_t receive_message_thread;
     if (pthread_create(&receive_message_thread, NULL, (void*)receive_message_handler, NULL) != 0) {
-        printf("ERROR: receive message\n");
+        perror("receive message");
         return EXIT_FAILURE;
     }
 
