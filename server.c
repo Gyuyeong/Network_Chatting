@@ -76,7 +76,7 @@ void send_message(char* message, int uid) {
     while (cursor != NULL) {
         if (cursor->uid != uid) {
             if (write(cursor->sockfd, message, strlen(message)) < 0) {
-                printf("ERROR: write failed");
+                perror("write");
                 break;
             }
         }
@@ -96,7 +96,7 @@ void* handle_client(void* arg) {
 
     // improper name, the user leaves
     if (recv(client->sockfd, name, NAME_LEN, 0) <= 0 || strlen(name) < 1 || strlen(name) >= NAME_LEN - 1) {
-        printf("Name must not be blank nor longer than 32\n");
+        perror("Name must not be blank nor longer than 32\n");
         leave = 1;
     } else {  // proper name, join the room
         strcpy(client->name, name);
@@ -123,7 +123,7 @@ void* handle_client(void* arg) {
             send_message(buffer, client->uid);
             leave = 1;
         } else {  // something went wrong
-            printf("ERROR\n");
+            perror("recv");
             leave = 1;
         }
 
@@ -164,19 +164,19 @@ int main(int argc, char **argv) {
 
     // use the same address when rebooting after an unexpected shut down
     if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (char*)&option, sizeof(option)) < 0) {
-        printf("ERROR: setsockopt\n");
+        perror("setsockopt");
         return EXIT_FAILURE;
     }
 
     // if bind listenfd to server address
     if (bind(listenfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-        printf("ERROR: bind\n");
+        perror("bind");
         return EXIT_FAILURE;
     }
 
     // listen up to 10 connection at the same time
     if (listen(listenfd, 10) < 0) {
-        printf("ERROR: listen\n");
+        perror("listen");
         return EXIT_FAILURE;
     }
 
