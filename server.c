@@ -115,7 +115,7 @@ void* handle_client(void* arg) {
             if (strlen(buffer) > 0) {  // a message has been sent from user
                 send_message(buffer, client->uid);  // send to everyone in the room
                 trim_ln(buffer, strlen(buffer));  // trim the string
-                printf("%s -> %s\n", buffer, client->name);  // print it out
+                printf("%s\n", buffer);  // print it out
             }
         } else if (received == 0 || strcmp(buffer, "exit") == 0) {  // the user wants to exit
             sprintf(buffer, "%s has left\n", client->name);
