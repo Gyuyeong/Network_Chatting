@@ -104,7 +104,7 @@ void* handle_client(void* arg) {
         printf("%s", buffer);
         send_message(buffer, client->uid);  // send the join message to everyone except the joined user
     }
-     bzero(buffer, BUFFER_SIZE);
+    bzero(buffer, BUFFER_SIZE);
 
     while(1) {
         if (leave) break;
@@ -209,3 +209,4 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
+
